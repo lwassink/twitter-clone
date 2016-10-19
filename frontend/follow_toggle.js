@@ -4,7 +4,9 @@ class FollowToggle {
     this.followState = String($el.data("initial-follow-state"));
     this.$el = $el;
     this.render();
-    this.handleClick();
+
+    //Set up button listener
+    this.$el.on("click", this.handleClick.bind(this));
   }
 
   render() {
@@ -23,31 +25,31 @@ class FollowToggle {
     }
   }
 
-  handleClick() {
-    this.$el.on("click", (e) => {
-      e.preventDefault();
-      let requestType;
-      if (this.followState === "true") {
-        requestType = 'DELETE';
-        this.followState = "Unfollowing";
-      } else
-      if (this.followState === "false") {
-        requestType = 'POST';
-        this.followState = "Following";
+  handleClick(e) {
+    // debugger
+    e.preventDefault();
+    let requestType;
+
+    if (this.followState === "true") {
+      requestType = 'DELETE';
+      this.followState = "Unfollowing";
+    } else
+    if (this.followState === "false") {
+      requestType = 'POST';
+      this.followState = "Following";
+    }
+
+    //Freeze the button
+    this.render();
+
+    $.ajax({
+      url: `/users/${this.userId}/follow`,
+      type: requestType,
+      dataType: 'json',
+      success: () => {
+        this.toggleFollowState();
+        this.render();
       }
-
-      //Freeze the button
-      this.render();
-
-      $.ajax({
-        url: `/users/${this.userId}/follow`,
-        type: requestType,
-        dataType: 'json',
-        success: () => {
-          this.toggleFollowState();
-          this.render();
-        }
-      });
     });
   }
 
