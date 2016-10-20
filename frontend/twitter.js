@@ -1,6 +1,7 @@
 const FollowToggle = require("./follow_toggle");
 const UsersSearch = require("./users_search");
 const TweetCompose = require("./tweet_compose");
+const InfiniteTweets = require("./infinite_tweets");
 
 $(() => {
   // follow/unfollow users
@@ -16,5 +17,10 @@ $(() => {
   // tweet compose
   $(".tweet-compose").each((idx, el) => {
     let composer = new TweetCompose($(el));
+  });
+
+  // infinite scroll of tweets
+  $(".infinite-tweets").each((idx, el) => {
+    let scroller = new InfiniteTweets($(el));
   });
 });

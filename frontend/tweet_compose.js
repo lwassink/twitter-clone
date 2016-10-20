@@ -75,6 +75,7 @@ class TweetCompose {
     this.$el.find("textarea").val("");
     this.$el.find("select").prop("selectedIndex", 0);
     $("strong").text("140");
+    $(".mentioned-users").empty();
   }
 
   addMentionedUser(e) {
