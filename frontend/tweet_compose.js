@@ -3,8 +3,13 @@ class TweetCompose {
     this.$el = $el;
     this.$tweetList = $("#feed");
     this.enabled = true;
+
     this.$el.on("submit", this.submit.bind(this));
     this.$el.find("textarea").on("keyup", this.updateCounter.bind(this));
+    $(".add-mentioned-user").on("click",
+      this.addMentionedUser.bind(this));
+    $(".mentioned-users").on("click",
+      this.removeMentionedUser.bind(this));
   }
 
   submit(e) {
@@ -19,7 +24,6 @@ class TweetCompose {
       dataType: 'json',
       data: formData,
       success: (body) => {
-        console.log(body);
         this.render(body);
         this.toggleFormEnabled();
         this.resetForm();
@@ -42,10 +46,18 @@ class TweetCompose {
     $li.append($userLink);
     $li.append(` -- ${body.created_at}`);
 
-    // let $mentionList = $("<ul>");
-    // let $mentionLink = $("<a>");
+    let $mentionList = $("<ul>");
 
+    $(body.mentions).each((idx, mention) => {
+      $mentionList.append($("<li>"));
 
+      let $mentionLink = $("<a>");
+      $mentionLink.text(mention.user.username);
+      $mentionLink.attr("href", `/users/${mention.user_id}`);
+      $($mentionList[0].lastChild).append($mentionLink);
+    });
+
+    $li.append($mentionList);
     this.$tweetList.prepend($li);
   }
 
@@ -62,7 +74,24 @@ class TweetCompose {
   resetForm() {
     this.$el.find("textarea").val("");
     this.$el.find("select").prop("selectedIndex", 0);
+    $("strong").text("140");
   }
+
+  addMentionedUser(e) {
+    e.preventDefault();
+    let selectHTML = $("#mention-template").html();
+    $(".mentioned-users").append(selectHTML);
+  }
+
+  removeMentionedUser(e) {
+    e.preventDefault();
+    let $target = $(e.target)[0];
+    console.log($target.className);
+    if ($target.className === "remove-mentioned-user"){
+      $(e.target.parentElement).remove();
+    }
+  }
+
 }
 
 module.exports = TweetCompose;
